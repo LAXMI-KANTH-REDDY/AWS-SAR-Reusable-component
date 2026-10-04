@@ -1,0 +1,19 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowServerlessRepositoryRead",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "serverlessrepo.amazonaws.com"
+      },
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::scholarship-serverless-artifacts-528087308594/*",
+      "Condition": {
+        "StringEquals": {
+          "aws:SourceAccount": "528087308594"
+        }
+      }
+    }
+  ]
+}

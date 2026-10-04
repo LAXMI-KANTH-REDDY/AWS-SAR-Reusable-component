@@ -1,0 +1,14 @@
+version = 0.1
+
+[default.deploy.parameters]
+stack_name = "ScholarshipPortalBackend"
+resolve_s3 = true
+s3_prefix = "ScholarshipPortalBackend"
+region = "us-east-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "NotificationTopicArn=\"arn:aws:sns:us-east-1:528087308594:ScholarshipNotificationTopic\""
+image_repositories = []
+
+[default.global.parameters]
+region = "us-east-1"

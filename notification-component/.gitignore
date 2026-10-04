@@ -1,0 +1,20 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.aws-sam/
+*.pyc
+*.pyo
+*.pyd
+.env
+*.log
+credentials
+*.pem
+*.key
+
+# Keep project files tracked
+!template.yaml
+!app.py
+!README.md
+!LICENSE.txt
+!events/
+!tests/

@@ -1,0 +1,67 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Parameters:
+  SenderEmail:
+    Type: String
+    Description: Verified SES sender email address used by the notification function.
+Metadata:
+  AWS::ServerlessRepo::Application:
+    Name: ScholarshipNotificationComponent
+    Description: Reusable SNS to SES notification component for serverless applications.
+    Author: scholarship-serverless-team
+    SpdxLicenseId: Apache-2.0
+    Labels:
+    - notification
+    - sns
+    - ses
+    - serverless
+    - scholarship
+    SemanticVersion: 1.0.0
+    ReadmeUrl: s3://scholarship-serverless-artifacts-528087308594/150c42a792dee577652a6cf24b217b42
+    LicenseUrl: s3://scholarship-serverless-artifacts-528087308594/5a0b1f868409f14b1eaa35a39c086efb
+Resources:
+  NotificationTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: ScholarshipNotificationTopic
+    Metadata:
+      SamResourceId: NotificationTopic
+  NotificationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: ScholarshipNotificationFunction
+      CodeUri: s3://scholarship-serverless-artifacts-528087308594/5700a21e7268580c92db1e18d1dc4c36
+      Handler: app.lambda_handler
+      Runtime: python3.13
+      MemorySize: 128
+      Timeout: 10
+      Environment:
+        Variables:
+          SENDER_EMAIL:
+            Ref: SenderEmail
+      Events:
+        NotificationTopicSubscription:
+          Type: SNS
+          Properties:
+            Topic:
+              Ref: NotificationTopic
+      Policies:
+      - Statement:
+        - Sid: SendSesEmail
+          Effect: Allow
+          Action:
+          - ses:SendEmail
+          Resource: '*'
+    Metadata:
+      SamResourceId: NotificationFunction
+Outputs:
+  NotificationTopicArn:
+    Description: ARN for the SNS topic that triggers the notification Lambda.
+    Value:
+      Ref: NotificationTopic
+  NotificationFunctionArn:
+    Description: ARN for the notification Lambda function.
+    Value:
+      Fn::GetAtt:
+      - NotificationFunction
+      - Arn

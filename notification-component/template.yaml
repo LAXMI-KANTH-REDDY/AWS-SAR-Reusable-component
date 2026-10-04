@@ -1,0 +1,62 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  SenderEmail:
+    Type: String
+    Description: Verified SES sender email address used by the notification function.
+
+Metadata:
+  AWS::ServerlessRepo::Application:
+    Name: ScholarshipNotificationComponent
+    Description: Reusable SNS to SES notification component for serverless applications.
+    Author: scholarship-serverless-team
+    SpdxLicenseId: Apache-2.0
+    Labels:
+      - notification
+      - sns
+      - ses
+      - serverless
+      - scholarship
+    SemanticVersion: 1.0.0
+    ReadmeUrl: README.md
+    LicenseUrl: LICENSE.txt
+
+Resources:
+  NotificationTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: ScholarshipNotificationTopic
+
+  NotificationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: ScholarshipNotificationFunction
+      CodeUri: .
+      Handler: app.lambda_handler
+      Runtime: python3.13
+      MemorySize: 128
+      Timeout: 10
+      Environment:
+        Variables:
+          SENDER_EMAIL: !Ref SenderEmail
+      Events:
+        NotificationTopicSubscription:
+          Type: SNS
+          Properties:
+            Topic: !Ref NotificationTopic
+      Policies:
+        - Statement:
+            - Sid: SendSesEmail
+              Effect: Allow
+              Action:
+                - ses:SendEmail
+              Resource: "*"
+
+Outputs:
+  NotificationTopicArn:
+    Description: ARN for the SNS topic that triggers the notification Lambda.
+    Value: !Ref NotificationTopic
+  NotificationFunctionArn:
+    Description: ARN for the notification Lambda function.
+    Value: !GetAtt NotificationFunction.Arn

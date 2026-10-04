@@ -1,0 +1,5 @@
+{
+  "body": "{\"name\":\"Student Name\",\"email\":\"student@example.com\",\"phone\":\"9876543210\",\"course\":\"B.Tech\",\"college\":\"Example University\",\"scholarship\":\"Merit Scholarship\"}",
+  "httpMethod": "POST",
+  "path": "/applications"
+}

@@ -1,0 +1,100 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  NotificationTopicArn:
+    Type: String
+    Default: arn:aws:sns:us-east-1:528087308594:ScholarshipNotificationTopic
+    Description: Existing SNS topic ARN for scholarship notifications.
+
+Resources:
+
+  ScholarshipPortalApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: prod
+      CorsConfiguration:
+        AllowOrigins:
+          - "*"
+        AllowMethods:
+          - GET
+          - POST
+          - OPTIONS
+        AllowHeaders:
+          - Content-Type
+
+  ScholarshipApplications:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ScholarshipApplications
+      AttributeDefinitions:
+        - AttributeName: applicationId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: applicationId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
+  ScholarshipPortalFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: ScholarshipPortalAPI
+      CodeUri: src
+      Handler: app.lambda_handler
+      Runtime: python3.13
+      MemorySize: 128
+      Timeout: 10
+
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref ScholarshipApplications
+          NOTIFICATION_TOPIC_ARN: !Ref NotificationTopicArn
+
+      Policies:
+        - Statement:
+            - Sid: DynamoWriteRead
+              Effect: Allow
+              Action:
+                - dynamodb:PutItem
+                - dynamodb:GetItem
+              Resource: !GetAtt ScholarshipApplications.Arn
+
+            - Sid: PublishNotification
+              Effect: Allow
+              Action:
+                - sns:Publish
+              Resource: !Ref NotificationTopicArn
+
+      Events:
+
+        PostApplication:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ScholarshipPortalApi
+            Path: /applications
+            Method: POST
+
+        GetApplication:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ScholarshipPortalApi
+            Path: /applications/{applicationId}
+            Method: GET
+
+Outputs:
+
+  ApiUrl:
+    Description: URL of the Scholarship Portal API.
+    Value: !Sub "https://${ScholarshipPortalApi}.execute-api.${AWS::Region}.amazonaws.com/prod/"
+
+  TableName:
+    Description: Name of the DynamoDB table used for scholarship applications.
+    Value: !Ref ScholarshipApplications
+
+  NotificationTopicArn:
+    Description: ARN of the existing notification SNS topic.
+    Value: !Ref NotificationTopicArn
+
+  FunctionArn:
+    Description: ARN of the Scholarship Portal Lambda.
+    Value: !GetAtt ScholarshipPortalFunction.Arn

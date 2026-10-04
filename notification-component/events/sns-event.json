@@ -1,0 +1,22 @@
+{
+  "Records": [
+    {
+      "EventSource": "aws:sns",
+      "EventVersion": "1.0",
+      "EventSubscriptionArn": "arn:aws:sns:us-east-1:123456789012:ScholarshipNotificationTopic:subscription-id",
+      "Sns": {
+        "Type": "Notification",
+        "MessageId": "95df01b4-ee98-5cb9-9ebe-ca5e4967f6b5",
+        "TopicArn": "arn:aws:sns:us-east-1:123456789012:ScholarshipNotificationTopic",
+        "Subject": "Scholarship Application Received",
+        "Message": "{\"email\":\"student@example.com\",\"subject\":\"Scholarship Application Received\",\"message\":\"Your scholarship application SCH-12345678 has been received successfully.\"}",
+        "Timestamp": "2026-10-03T12:00:00.000Z",
+        "SignatureVersion": "1",
+        "Signature": "example-signature",
+        "SigningCertUrl": "https://sns.us-east-1.amazonaws.com/SimpleNotificationService-000000000000.pem",
+        "UnsubscribeUrl": "https://sns.us-east-1.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:us-east-1:123456789012:ScholarshipNotificationTopic:subscription-id",
+        "MessageAttributes": {}
+      }
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "httpMethod": "GET",
+  "path": "/applications/SCH-1234ABCD",
+  "pathParameters": {
+    "applicationId": "SCH-1234ABCD"
+  }
+}

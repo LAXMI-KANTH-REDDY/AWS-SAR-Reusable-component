@@ -1,0 +1,11 @@
+version = 0.1
+[default]
+[default.deploy]
+stack_name = "scholarship-notification-component"
+region = "us-east-1"
+confirm_changeset = false
+resolve_s3 = true
+parameter_overrides = "SenderEmail=noreply@example.com"
+
+# This file is an example only. Do not commit or store actual AWS credentials.
+# Update the SenderEmail value to your verified SES sender address before deployment.
